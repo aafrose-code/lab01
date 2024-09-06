@@ -1,31 +1,29 @@
 #include "stm32f0xx.h"
 extern void autotest();
 extern void internal_clock();
-void initb();
-void initc();
-void buttons(void);
-void keypad(void);
-
-int main(void) {
-    autotest();
-    initb();
-    initc();
-    /*while (1) {
-        buttons();
-    }*/
-    /*while (1) {
-        keypad();
-    }*/
-   for (;;);
+void setup_serial(void)
+{
+    RCC->AHBENR |= 0x00180000;
+    GPIOC->MODER  |= 0x02000000;
+    GPIOC->AFR[1] |= 0x00020000;
+    GPIOD->MODER  |= 0x00000020;
+    GPIOD->AFR[0] |= 0x00000200;
+    RCC->APB1ENR |= 0x00100000;
+    USART5->CR1 &= ~0x00000001;
+    USART5->CR1 |= 0x00008000;
+    USART5->BRR = 0x340;
+    USART5->CR1 |= 0x0000000c;
+    USART5->CR1 |= 0x00000001;
 }
+int main(void)
+{
+    internal_clock();   // Never comment this out!
 
-void initb () {
-    RCC->AHBENR |= RCC_AHBENR_GPIOBEN; //Enabling the RCC clock for Port B
-    GPIOB->MODER &= ~0x0000F00F;//Although the default is input for the pins, this line will make sure to set the input for pins 0,4,8,9,10,11
-    GPIOB->MODER |= 0x00005500;//Setting output for pins 8-11 while keeping 0 and 4 as inputs.
-}
-
-void initc() {
+    autotest();         // Only comment this out when you are done testing.
     
+    setup_serial();
+    while(1) {
+        if ((USART5->ISR & USART_ISR_RXNE))  // if receive buffer has some data in it
+            USART5->TDR = USART5->RDR;       // copy that data into transmit buffer.
+    }
 }
-
