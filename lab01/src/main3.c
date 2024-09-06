@@ -16,6 +16,9 @@ int main(void) {
     /*while (1) {
         keypad();
     }*/
+    /*
+    setn(8,2093); //test it out
+    */
    for (;;);
 }
 
@@ -31,4 +34,11 @@ void initc() {
     GPIOC->MODER |= 0x00005500; //Setting output for pins 4-7
     GPIOC->PUPDR &= 0x000000FF; //Pull down for pins 0-3
     GPIOC->PUPDR |= 0x000000FF; //Setting pins 0-3 for pull down
+}
+void setn(int pinNum, int pinValue) {//pinNum used to access the pins on the microcontroller and pinValue will either turn that pin on or off
+    if (pinValue != 0) {//anything other than 0 would turn the pin on.
+        GPIOB->BSRR = (1 << pinNum);//1 << pinNum will access the pin on the microcontroller through the bit mask 
+    } else {
+        GPIOB->BRR = (1 << pinNum);
+    }
 }
