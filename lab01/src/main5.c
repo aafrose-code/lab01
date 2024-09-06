@@ -6,7 +6,6 @@ void initc();
 void setn(int, int);
 uint16_t readpin (uint16_t);
 void buttons(void);
-void keypad(void);
 
 int main(void) {
     autotest();
@@ -51,10 +50,4 @@ uint16_t readpin (uint16_t pinNum) {
     } else {//low pin state (0 << pinNum)
         return 0;
     }
-}
-void button () {
-    uint16_t buttonZero = readpin(0);//Read button input at PB0
-    setn(8,buttonZero);//Put the PB0 value as output for PB8
-    uint16_t buttonFour = readpin(4);//Read button input at PB4
-    setn(9,buttonFour);//Put the PB4 value as output for PB9
 }
